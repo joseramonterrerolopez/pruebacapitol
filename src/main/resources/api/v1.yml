@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: Price API
+  description: API for retrieving prices.
+  version: v1
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /prices/in-action:
+    get:
+      operationId: getPricesInAction
+      tags:
+        - prices
+      summary: Get price in action of a brand and a product at a specific date and time
+      parameters:
+        - name: brandId
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The unique identifier of the brand.
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 101
+          description: The unique identifier of the product.
+        - name: dateTime
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            example: "2024-09-06T12:00:00Z"
+          description: The specific date and time for which the price is requested, in ISO 8601 format.
+      responses:
+        '200':
+          description: Price found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceInActionResponse'
+              examples:
+                successful-retrieval:
+                  summary: Successful price retrieval
+                  value:
+                    productId: 101
+                    brandId: 1
+                    priceList: 1
+                    startDate: "2024-09-01T00:00:00Z"
+                    endDate: "2024-09-07T23:59:59Z"
+                    price: 29.99
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                bad-request-example:
+                  summary: Invalid query parameter
+                  value:
+                    code: 400
+                    message: "Invalid dateTime parameter."
+        '404':
+          description: Price not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                not-found-example:
+                  summary: Resource not found
+                  value:
+                    code: 404
+                    message: "Price for the specified brand and product not found."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internal-server-error-example:
+                  summary: Unexpected server error
+                  value:
+                    code: 500
+                    message: "Internal server error."
+components:
+  schemas:
+    PriceInActionResponse:
+      type: object
+      properties:
+        productId:
+          type: integer
+          description: The unique identifier of the product.
+          example: 101
+        brandId:
+          type: integer
+          description: The unique identifier of the brand.
+          example: 1
+        priceList:
+          type: integer
+          description: The price list identifier.
+          example: 1
+        startDate:
+          type: string
+          format: date-time
+          description: The start date and time of the price validity period, in ISO 8601 format.
+          example: "2024-09-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          description: The end date and time of the price validity period, in ISO 8601 format.
+          example: "2024-09-07T23:59:59Z"
+        price:
+          type: number
+          format: float
+          description: The price of the product.
+          example: 29.99
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: The HTTP status code.
+          example: 404
+        message:
+          type: string
+          description: A description of the error that occurred.
+          example: "Price for the specified brand and product not found."
