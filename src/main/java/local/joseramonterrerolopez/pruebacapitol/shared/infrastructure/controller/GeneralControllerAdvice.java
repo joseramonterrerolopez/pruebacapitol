@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Objects;
 
@@ -34,9 +35,16 @@ public class GeneralControllerAdvice {
     // Handle Not Found (404)
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(NotFoundException ex) {
         String message = String.format("'%s' not found", ex.getResourceName());
         return new ResponseEntity<>(errorBody(HttpStatus.NOT_FOUND, message), HttpStatus.NOT_FOUND);
+    }
+
+    // Handle Not Found (404)
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handleUrlNotFound(NoResourceFoundException ex) {
+        return new ResponseEntity<>(errorBody(HttpStatus.NOT_FOUND, ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     // Handle Internal Server Error (500)
