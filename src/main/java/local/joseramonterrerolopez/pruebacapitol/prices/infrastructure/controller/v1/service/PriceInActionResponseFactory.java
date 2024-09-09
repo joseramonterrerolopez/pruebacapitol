@@ -4,6 +4,7 @@ import local.joseramonterrerolopez.pruebacapitol.prices.domain.PriceInActionPrim
 import org.openapitools.model.PriceInActionResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -15,14 +16,14 @@ public class PriceInActionResponseFactory {
             .productId(priceInActionPrimitives.productId())
             .brandId(priceInActionPrimitives.brandId())
             .priceList(priceInActionPrimitives.priceList())
-            .startDate(OffsetDateTime
-                    .of(priceInActionPrimitives.startDate(), ZoneOffset.UTC)
-                    .withOffsetSameInstant(givenUserOffset)
-            )
-            .endDate(OffsetDateTime
-                    .of(priceInActionPrimitives.endDate(), ZoneOffset.UTC)
-                    .withOffsetSameInstant(givenUserOffset)
-            )
+            .startDate(toOffsetDateTime(priceInActionPrimitives.startDate(), givenUserOffset))
+            .endDate(toOffsetDateTime(priceInActionPrimitives.endDate(), givenUserOffset))
             .price(priceInActionPrimitives.price());
+    }
+    private OffsetDateTime toOffsetDateTime(LocalDateTime dateTime, ZoneOffset toZone)
+    {
+        return OffsetDateTime
+                .of(dateTime, ZoneOffset.UTC)
+                .withOffsetSameInstant(toZone);
     }
 }

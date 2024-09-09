@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -45,17 +46,21 @@ public class PriceController implements PricesApi {
             @Valid @RequestParam(value = "dateTime", required = true)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dateTime
     ) {
+        LocalDateTime utcDateTime = dateTime
+                .withOffsetSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime();
+        ZoneOffset clientOffset = dateTime.getOffset();
+
         PriceInActionPrimitives priceInActionPrimitives = priceInActionFinder.execute(
                 BrandId.of(brandId),
                 ProductId.of(productId),
-                dateTime
-                    .withOffsetSameInstant(ZoneOffset.UTC)
-                    .toLocalDateTime()
+                utcDateTime
         );
         PriceInActionResponse priceInActionResponse = priceInActionResponseFactory.from(
                 priceInActionPrimitives,
-                dateTime.getOffset()
+                clientOffset
         );
+
         return ResponseEntity.ok(priceInActionResponse);
     }
 }
