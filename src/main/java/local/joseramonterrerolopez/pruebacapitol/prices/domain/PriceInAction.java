@@ -4,6 +4,8 @@ import local.joseramonterrerolopez.pruebacapitol.prices.domain.valueobject.*;
 import local.joseramonterrerolopez.pruebacapitol.shared.domain.exception.NullValueObjectException;
 import local.joseramonterrerolopez.pruebacapitol.shared.domain.Primitable;
 
+import java.util.Objects;
+
 public class PriceInAction implements Primitable<PriceInActionPrimitives> {
     private final PriceList priceList;
     private final BrandId brandId;
@@ -43,6 +45,19 @@ public class PriceInAction implements Primitable<PriceInActionPrimitives> {
                 endDate.value(),
                 price.value()
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PriceInAction that = (PriceInAction) o;
+        return Objects.equals(priceList.value(), that.priceList.value())
+                && Objects.equals(brandId.value(), that.brandId.value())
+                && Objects.equals(productId.value(), that.productId.value())
+                && Objects.equals(startDate.value(), that.startDate.value())
+                && Objects.equals(endDate.value(), that.endDate.value())
+                && Objects.equals(price.value(), that.price.value());
     }
 
     private void guardNotNull(Object valueObject)

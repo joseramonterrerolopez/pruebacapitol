@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "prices")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 public class PriceDto {
     @Id
